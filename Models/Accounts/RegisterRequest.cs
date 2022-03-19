@@ -25,6 +25,7 @@ public class RegisterRequest
     [Compare("Password")]
     public string ConfirmPassword { get; set; }
 
+    [Required]
     [Range(typeof(bool), "true", "true")]
     public bool AcceptTerms { get; set; }
 
