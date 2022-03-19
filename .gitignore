@@ -1,6 +1,7 @@
 # custom
 build.ps1
 clean_db.ps1
+appsettings.json
 
 # Logs
 logs
