@@ -19,7 +19,7 @@ public class AccountsController : BaseController
     }
 
     [AllowAnonymous]
-    [HttpPost("authenticate")]
+    [HttpPost("login")]
     public ActionResult<AuthenticateResponse> Authenticate(AuthenticateRequest model)
     {
         var response = _accountService.Authenticate(model, ipAddress());
@@ -55,7 +55,7 @@ public class AccountsController : BaseController
     }
 
     [AllowAnonymous]
-    [HttpPost("register")]
+    [HttpPost("signup")]
     public IActionResult Register(RegisterRequest model)
     {
         _accountService.Register(model, Request.Headers["origin"]);
