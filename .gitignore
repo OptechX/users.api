@@ -1,3 +1,7 @@
+# custom
+build.ps1
+clean_db.ps1
+
 # Logs
 logs
 *.log
@@ -43,3 +47,7 @@ obj
 
 # Generated SQLite db
 WebApiDatabase.db
+
+# VSCode & Visual Studio
+.vscode
+.vs
