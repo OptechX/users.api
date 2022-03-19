@@ -26,7 +26,7 @@ public class Account
     public DateTime Created { get; set; }
     public DateTime? Updated { get; set; }
     public List<RefreshToken> RefreshTokens { get; set; }
-    public bool? IsVip { get; set; }
+    public VipStatus? VipStatus { get; set; }
     public Guid? EnterpriseAgreement { get; set; }
     public string? StripePaymentToken { get; set; }
     public BillingType BillingType { get; set; }
