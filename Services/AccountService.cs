@@ -15,7 +15,7 @@ using WebApi.Models.Accounts;
 
 public interface IAccountService
 {
-    AuthenticateResponse Authenticate(AuthenticateRequest model, string ipAddress);
+    AuthenticateResponse Authenticate(LoginRequest model, string ipAddress);
     AuthenticateResponse RefreshToken(string token, string ipAddress);
     void RevokeToken(string token, string ipAddress);
     void Register(SignUpRequest model, string origin);
@@ -52,7 +52,7 @@ public class AccountService : IAccountService
         _emailService = emailService;
     }
 
-    public AuthenticateResponse Authenticate(AuthenticateRequest model, string ipAddress)
+    public AuthenticateResponse Authenticate(LoginRequest model, string ipAddress)
     {
         var account = _context.Accounts.SingleOrDefault(x => x.Email == model.Email);
 

@@ -20,7 +20,7 @@ public class AccountsController : BaseController
 
     [AllowAnonymous]
     [HttpPost("login")]
-    public ActionResult<AuthenticateResponse> Authenticate(AuthenticateRequest model)
+    public ActionResult<AuthenticateResponse> Authenticate(LoginRequest model)
     {
         var response = _accountService.Authenticate(model, ipAddress());
         setTokenCookie(response.RefreshToken);
