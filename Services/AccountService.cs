@@ -18,7 +18,7 @@ public interface IAccountService
     AuthenticateResponse Authenticate(AuthenticateRequest model, string ipAddress);
     AuthenticateResponse RefreshToken(string token, string ipAddress);
     void RevokeToken(string token, string ipAddress);
-    void Register(RegisterRequest model, string origin);
+    void Register(SignUpRequest model, string origin);
     void VerifyEmail(string token);
     void ForgotPassword(ForgotPasswordRequest model, string origin);
     void ValidateResetToken(ValidateResetTokenRequest model);
@@ -129,7 +129,7 @@ public class AccountService : IAccountService
         _context.SaveChanges();
     }
 
-    public void Register(RegisterRequest model, string origin)
+    public void Register(SignUpRequest model, string origin)
     {
         // validate
         if (_context.Accounts.Any(x => x.Email == model.Email))

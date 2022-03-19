@@ -13,7 +13,7 @@ public class AutoMapperProfile : Profile
 
         CreateMap<Account, AuthenticateResponse>();
 
-        CreateMap<RegisterRequest, Account>();
+        CreateMap<SignUpRequest, Account>();
 
         CreateMap<CreateRequest, Account>();
 
