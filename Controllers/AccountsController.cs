@@ -56,7 +56,7 @@ public class AccountsController : BaseController
 
     [AllowAnonymous]
     [HttpPost("signup")]
-    public IActionResult Register(RegisterRequest model)
+    public IActionResult Register(SignUpRequest model)
     {
         _accountService.Register(model, Request.Headers["origin"]);
         return Ok(new { message = "Registration successful, please check your email for verification instructions" });

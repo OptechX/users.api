@@ -2,7 +2,7 @@ namespace WebApi.Models.Accounts;
 
 using System.ComponentModel.DataAnnotations;
 
-public class RegisterRequest
+public class SignUpRequest
 {
     //[Required]
     public string Company { get; set; }
