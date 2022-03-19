@@ -20,7 +20,7 @@ public class AccountsController : BaseController
 
     [AllowAnonymous]
     [HttpPost("login")]
-    public ActionResult<AuthenticateResponse> Authenticate(LoginRequest model)
+    public ActionResult<LoginResponse> Authenticate(LoginRequest model)
     {
         var response = _accountService.Authenticate(model, ipAddress());
         setTokenCookie(response.RefreshToken);
@@ -29,7 +29,7 @@ public class AccountsController : BaseController
 
     [AllowAnonymous]
     [HttpPost("refresh-token")]
-    public ActionResult<AuthenticateResponse> RefreshToken()
+    public ActionResult<LoginResponse> RefreshToken()
     {
         var refreshToken = Request.Cookies["refreshToken"];
         var response = _accountService.RefreshToken(refreshToken, ipAddress());

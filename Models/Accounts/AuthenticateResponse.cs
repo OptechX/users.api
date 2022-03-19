@@ -2,7 +2,7 @@ namespace WebApi.Models.Accounts;
 
 using System.Text.Json.Serialization;
 
-public class AuthenticateResponse
+public class LoginResponse
 {
     public int Id { get; set; }
     public string Company { get; set; }

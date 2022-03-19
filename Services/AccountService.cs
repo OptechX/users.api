@@ -15,8 +15,8 @@ using WebApi.Models.Accounts;
 
 public interface IAccountService
 {
-    AuthenticateResponse Authenticate(LoginRequest model, string ipAddress);
-    AuthenticateResponse RefreshToken(string token, string ipAddress);
+    LoginResponse Authenticate(LoginRequest model, string ipAddress);
+    LoginResponse RefreshToken(string token, string ipAddress);
     void RevokeToken(string token, string ipAddress);
     void Register(SignUpRequest model, string origin);
     void VerifyEmail(string token);
@@ -52,7 +52,7 @@ public class AccountService : IAccountService
         _emailService = emailService;
     }
 
-    public AuthenticateResponse Authenticate(LoginRequest model, string ipAddress)
+    public LoginResponse Authenticate(LoginRequest model, string ipAddress)
     {
         var account = _context.Accounts.SingleOrDefault(x => x.Email == model.Email);
 
@@ -72,13 +72,13 @@ public class AccountService : IAccountService
         _context.Update(account);
         _context.SaveChanges();
 
-        var response = _mapper.Map<AuthenticateResponse>(account);
+        var response = _mapper.Map<LoginResponse>(account);
         response.JwtToken = jwtToken;
         response.RefreshToken = refreshToken.Token;
         return response;
     }
 
-    public AuthenticateResponse RefreshToken(string token, string ipAddress)
+    public LoginResponse RefreshToken(string token, string ipAddress)
     {
         var account = getAccountByRefreshToken(token);
         var refreshToken = account.RefreshTokens.Single(x => x.Token == token);
@@ -109,7 +109,7 @@ public class AccountService : IAccountService
         var jwtToken = _jwtUtils.GenerateJwtToken(account);
 
         // return data in authenticate response object
-        var response = _mapper.Map<AuthenticateResponse>(account);
+        var response = _mapper.Map<LoginResponse>(account);
         response.JwtToken = jwtToken;
         response.RefreshToken = newRefreshToken.Token;
         return response;
