@@ -4,13 +4,13 @@ using System.ComponentModel.DataAnnotations;
 
 public class RegisterRequest
 {
-    [Required]
-    public string Title { get; set; }
+    //[Required]
+    public string Company { get; set; }
 
-    [Required]
+    //[Required]
     public string FirstName { get; set; }
 
-    [Required]
+    //[Required]
     public string LastName { get; set; }
 
     [Required]
@@ -18,7 +18,7 @@ public class RegisterRequest
     public string Email { get; set; }
 
     [Required]
-    [MinLength(6)]
+    [MinLength(8)]
     public string Password { get; set; }
 
     [Required]
@@ -27,4 +27,7 @@ public class RegisterRequest
 
     [Range(typeof(bool), "true", "true")]
     public bool AcceptTerms { get; set; }
+
+    [Required]
+    public string Country { get; set; }
 }

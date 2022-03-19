@@ -6,7 +6,7 @@ using WebApi.Entities;
 public class CreateRequest
 {
     [Required]
-    public string Title { get; set; }
+    public string Company { get; set; }
 
     [Required]
     public string FirstName { get; set; }
@@ -29,4 +29,7 @@ public class CreateRequest
     [Required]
     [Compare("Password")]
     public string ConfirmPassword { get; set; }
+
+    [Required]
+    public string Country { get; set; }
 }
