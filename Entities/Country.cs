@@ -2,6 +2,10 @@
 
 namespace WebApi.Entities;
 
+/*
+ * Source: https://github.com/datasets/country-list/blob/master/data.csv
+ */
+
 public enum Country
 {
     [EnumMember(Value = "SELECT COUNTRY")]Not_Selected,
