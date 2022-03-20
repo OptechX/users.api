@@ -4,6 +4,7 @@ clean_db.ps1
 appsettings.json
 Migrations/*
 Makefile
+appsettings.dev.json
 
 # Logs
 logs
