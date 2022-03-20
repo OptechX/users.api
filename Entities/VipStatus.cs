@@ -12,5 +12,6 @@ public enum VipStatus
     [EnumMember(Value = "Tranche 02")]Tranche_02,
     [EnumMember(Value = "Tranche 03")]Tranche_03,
     [EnumMember(Value = "Kickstarter")]Kickstarter,
+    [EnumMember(Value = "Early Backer")]Early_Backer,
     [EnumMember(Value = "Employee")]Employee
 }
