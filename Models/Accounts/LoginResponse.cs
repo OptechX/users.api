@@ -1,9 +1,10 @@
 namespace WebApi.Models.Accounts;
 
-public class AccountResponse
+using System.Text.Json.Serialization;
+
+public class LoginResponse
 {
     public int Id { get; set; }
-    public string UUID { get; set; }
     public string Company { get; set; }
     public string TaxID { get; set; }
     public string FirstName { get; set; }
@@ -17,13 +18,20 @@ public class AccountResponse
     public string Country { get; set; }
     public string UserIcon { get; set; }
     public DateTime Created { get; set; }
-    public int ServiceLevelResponseMinutes { get; set; }
-    public string EnterpriseAgreement { get; set; }
-    public string MSEnterpriseAgreementNumber { get; set; }
+    public string VipStatus { get; set; }
+    public Guid EnterpriseAgreement { get; set; }
+    public string StripeCustomerId { get; set; }
+    public string StripePaymentId { get; set; }
     public string BillingType { get; set; }
     public string AccountTier { get; set; }
     public int ImagesRemaining { get; set; }
     public int AppLockerStorageAvailable { get; set; }
     public int AppLockerStorageUsed { get; set; }
+    public Guid UUID { get; set; }
     public bool AccountNotifications { get; set; }
+
+    public string JwtToken { get; set; }
+
+    [JsonIgnore] // refresh token is returned in http only cookie
+    public string RefreshToken { get; set; }
 }

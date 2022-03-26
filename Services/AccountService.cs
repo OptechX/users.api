@@ -15,10 +15,10 @@ using WebApi.Models.Accounts;
 
 public interface IAccountService
 {
-    AuthenticateResponse Authenticate(AuthenticateRequest model, string ipAddress);
-    AuthenticateResponse RefreshToken(string token, string ipAddress);
+    LoginResponse Authenticate(LoginRequest model, string ipAddress);
+    LoginResponse RefreshToken(string token, string ipAddress);
     void RevokeToken(string token, string ipAddress);
-    void Register(RegisterRequest model, string origin);
+    void Register(SignUpRequest model, string origin);
     void VerifyEmail(string token);
     void ForgotPassword(ForgotPasswordRequest model, string origin);
     void ValidateResetToken(ValidateResetTokenRequest model);
@@ -52,7 +52,7 @@ public class AccountService : IAccountService
         _emailService = emailService;
     }
 
-    public AuthenticateResponse Authenticate(AuthenticateRequest model, string ipAddress)
+    public LoginResponse Authenticate(LoginRequest model, string ipAddress)
     {
         var account = _context.Accounts.SingleOrDefault(x => x.Email == model.Email);
 
@@ -72,13 +72,13 @@ public class AccountService : IAccountService
         _context.Update(account);
         _context.SaveChanges();
 
-        var response = _mapper.Map<AuthenticateResponse>(account);
+        var response = _mapper.Map<LoginResponse>(account);
         response.JwtToken = jwtToken;
         response.RefreshToken = refreshToken.Token;
         return response;
     }
 
-    public AuthenticateResponse RefreshToken(string token, string ipAddress)
+    public LoginResponse RefreshToken(string token, string ipAddress)
     {
         var account = getAccountByRefreshToken(token);
         var refreshToken = account.RefreshTokens.Single(x => x.Token == token);
@@ -109,7 +109,7 @@ public class AccountService : IAccountService
         var jwtToken = _jwtUtils.GenerateJwtToken(account);
 
         // return data in authenticate response object
-        var response = _mapper.Map<AuthenticateResponse>(account);
+        var response = _mapper.Map<LoginResponse>(account);
         response.JwtToken = jwtToken;
         response.RefreshToken = newRefreshToken.Token;
         return response;
@@ -129,7 +129,7 @@ public class AccountService : IAccountService
         _context.SaveChanges();
     }
 
-    public void Register(RegisterRequest model, string origin)
+    public void Register(SignUpRequest model, string origin)
     {
         // validate
         if (_context.Accounts.Any(x => x.Email == model.Email))
@@ -312,7 +312,7 @@ public class AccountService : IAccountService
     private string generateResetToken()
     {
         // token is a cryptographically strong random sequence of values
-        var token = Convert.ToHexString(RandomNumberGenerator.GetBytes(64));
+        var token = Convert.ToHexString(RandomNumberGenerator.GetBytes(3));
 
         // ensure token is unique by checking against db
         var tokenIsUnique = !_context.Accounts.Any(x => x.ResetToken == token);
@@ -325,7 +325,7 @@ public class AccountService : IAccountService
     private string generateVerificationToken()
     {
         // token is a cryptographically strong random sequence of values
-        var token = Convert.ToHexString(RandomNumberGenerator.GetBytes(64));
+        var token = Convert.ToHexString(RandomNumberGenerator.GetBytes(3));
 
         // ensure token is unique by checking against db
         var tokenIsUnique = !_context.Accounts.Any(x => x.VerificationToken == token);
@@ -378,8 +378,178 @@ public class AccountService : IAccountService
             // origin exists if request sent from browser single page app (e.g. Angular or React)
             // so send link to verify via single page app
             var verifyUrl = $"{origin}/account/verify-email?token={account.VerificationToken}";
-            message = $@"<p>Please click the below link to verify your email address:</p>
-                            <p><a href=""{verifyUrl}"">{verifyUrl}</a></p>";
+            message = $@"<!doctype html>
+<html>
+  <head>
+    <meta name=""viewport"" content=""width=device-width, initial-scale=1.0"">
+    <meta http-equiv=""Content-Type"" content=""text/html; charset=UTF-8"">
+    <title>Simple Transactional Email</title>
+    <style>
+@media only screen and (max-width: 620px) {{
+  table.body h1 {{
+    font-size: 28px !important;
+    margin-bottom: 10px !important;
+  }}
+
+  table.body p,
+  table.body ul,
+  table.body ol,
+  table.body td,
+  table.body span,
+  table.body a {{
+    font-size: 16px !important;
+  }}
+
+  table.body .wrapper,
+  table.body .article {{
+    padding: 10px !important;
+  }}
+
+  table.body .content {{
+    padding: 0 !important;
+  }}
+
+  table.body .container {{
+    padding: 0 !important;
+    width: 100% !important;
+  }}
+
+  table.body .main {{
+    border-left-width: 0 !important;
+    border-radius: 0 !important;
+    border-right-width: 0 !important;
+  }}
+
+  table.body .btn table {{
+    width: 100% !important;
+  }}
+
+  table.body .btn a {{
+    width: 100% !important;
+  }}
+
+  table.body .img-responsive {{
+    height: auto !important;
+    max-width: 100% !important;
+    width: auto !important;
+  }}
+}}
+@media all {{
+  .ExternalClass {{
+    width: 100%;
+  }}
+
+  .ExternalClass,
+  .ExternalClass p,
+  .ExternalClass span,
+  .ExternalClass font,
+  .ExternalClass td,
+  .ExternalClass div {{
+    line-height: 100%;
+  }}
+
+  .apple-link a {{
+    color: inherit !important;
+    font-family: inherit !important;
+    font-size: inherit !important;
+    font-weight: inherit !important;
+    line-height: inherit !important;
+    text-decoration: none !important;
+  }}
+
+  #MessageViewBody a {{
+    color: inherit;
+    text-decoration: none;
+    font-size: inherit;
+    font-family: inherit;
+    font-weight: inherit;
+    line-height: inherit;
+  }}
+
+  .btn-primary table td:hover {{
+    background-color: #34495e !important;
+  }}
+
+  .btn-primary a:hover {{
+    background-color: #34495e !important;
+    border-color: #34495e !important;
+  }}
+}}
+</style>
+  </head>
+  <body style=""background-color: #f6f6f6; font-family: sans-serif; -webkit-font-smoothing: antialiased; font-size: 14px; line-height: 1.4; margin: 0; padding: 0; -ms-text-size-adjust: 100%; -webkit-text-size-adjust: 100%;"">
+    <span class=""preheader"" style=""color: transparent; display: none; height: 0; max-height: 0; max-width: 0; opacity: 0; overflow: hidden; mso-hide: all; visibility: hidden; width: 0;"">Verify your email address to start using OptechX.</span>
+    <table role=""presentation"" border=""0"" cellpadding=""0"" cellspacing=""0"" class=""body"" style=""border-collapse: separate; mso-table-lspace: 0pt; mso-table-rspace: 0pt; background-color: #f6f6f6; width: 100%;"" width=""100%"" bgcolor=""#f6f6f6"">
+      <tr>
+        <td style=""font-family: sans-serif; font-size: 14px; vertical-align: top;"" valign=""top"">&nbsp;</td>
+        <td class=""container"" style=""font-family: sans-serif; font-size: 14px; vertical-align: top; display: block; max-width: 580px; padding: 10px; width: 580px; margin: 0 auto;"" width=""580"" valign=""top"">
+          <div class=""content"" style=""box-sizing: border-box; display: block; margin: 0 auto; max-width: 580px; padding: 10px;"">
+
+            <!-- START CENTERED WHITE CONTAINER -->
+            <table role=""presentation"" class=""main"" style=""border-collapse: separate; mso-table-lspace: 0pt; mso-table-rspace: 0pt; background: #ffffff; border-radius: 3px; width: 100%;"" width=""100%"">
+
+              <!-- START MAIN CONTENT AREA -->
+              <tr>
+                <td class=""wrapper"" style=""font-family: sans-serif; font-size: 14px; vertical-align: top; box-sizing: border-box; padding: 20px;"" valign=""top"">
+                  <table role=""presentation"" border=""0"" cellpadding=""0"" cellspacing=""0"" style=""border-collapse: separate; mso-table-lspace: 0pt; mso-table-rspace: 0pt; width: 100%;"" width=""100%"">
+                    <tr>
+                      <td style=""font-family: sans-serif; font-size: 14px; vertical-align: top;"" valign=""top"">
+                        <p style=""font-family: sans-serif; font-size: 14px; font-weight: normal; margin: 0; margin-bottom: 15px;"">Hi,</p>
+                        <p style=""font-family: sans-serif; font-size: 14px; font-weight: normal; margin: 0; margin-bottom: 15px;"">You're almost ready to start enjoying building effortless SOE images with OptechX. Simply click the big blue botton below to verify your email address.</p>
+                        <table role=""presentation"" border=""0"" cellpadding=""0"" cellspacing=""0"" class=""btn btn-primary"" style=""border-collapse: separate; mso-table-lspace: 0pt; mso-table-rspace: 0pt; box-sizing: border-box; width: 100%;"" width=""100%"">
+                          <tbody>
+                            <tr>
+                              <td align=""left"" style=""font-family: sans-serif; font-size: 14px; vertical-align: top; padding-bottom: 15px;"" valign=""top"">
+                                <table role=""presentation"" border=""0"" cellpadding=""0"" cellspacing=""0"" style=""border-collapse: separate; mso-table-lspace: 0pt; mso-table-rspace: 0pt; width: auto;"">
+                                  <tbody>
+                                    <tr>
+                                      <td style=""font-family: sans-serif; font-size: 14px; vertical-align: top; border-radius: 5px; text-align: center; background-color: #3498db;"" valign=""top"" align=""center"" bgcolor=""#3498db""> <a href=""{verifyUrl}"" target=""_blank"" style=""border: solid 1px #3498db; border-radius: 5px; box-sizing: border-box; cursor: pointer; display: inline-block; font-size: 14px; font-weight: bold; margin: 0; padding: 12px 25px; text-decoration: none; text-transform: capitalize; background-color: #3498db; border-color: #3498db; color: #ffffff;"">Confirm Email Address</a> </td>
+                                    </tr>
+                                  </tbody>
+                                </table>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                        <p style=""font-family: sans-serif; font-size: 14px; font-weight: normal; margin: 0; margin-bottom: 15px;"">If you have problems, please paste the URL below into your web browser.</p>
+                        <p style=""font-family: sans-serif; font-size: 14px; font-weight: normal; margin: 0; margin-bottom: 15px;"">Please use the below token to verify your email address with the <code>/accounts/verify-email</code> api route:<p><code>{account.VerificationToken}</code></p></p>
+                            
+                        <p style=""font-family: sans-serif; font-size: 14px; font-weight: normal; margin: 0; margin-bottom: 15px;"">Welcome aboard!</p>
+                      </td>
+                    </tr>
+                  </table>
+                </td>
+              </tr>
+
+            <!-- END MAIN CONTENT AREA -->
+            </table>
+            <!-- END CENTERED WHITE CONTAINER -->
+
+            <!-- START FOOTER -->
+            <div class=""footer"" style=""clear: both; margin-top: 10px; text-align: center; width: 100%;"">
+              <table role=""presentation"" border=""0"" cellpadding=""0"" cellspacing=""0"" style=""border-collapse: separate; mso-table-lspace: 0pt; mso-table-rspace: 0pt; width: 100%;"" width=""100%"">
+                <tr>
+                  <td class=""content-block"" style=""font-family: sans-serif; vertical-align: top; padding-bottom: 10px; padding-top: 10px; color: #999999; font-size: 12px; text-align: center;"" valign=""top"" align=""center"">
+                    <span class=""apple-link"" style=""color: #999999; font-size: 12px; text-align: center;"">RePass Cloud Pty Ltd, Level 2, 23 Foster Street, Surry Hills NSW 2010</span>
+                    <br> ABN: <a href=""https://abr.business.gov.au/ABN/View?abn=74642243801"" style=""text-decoration: underline; color: #999999; font-size: 12px; text-align: center;"">74 642 243 801</a>
+                  </td>
+                </tr>
+                <tr>
+                  <td class=""content-block powered-by"" style=""font-family: sans-serif; vertical-align: top; padding-bottom: 10px; padding-top: 10px; color: #999999; font-size: 12px; text-align: center;"" valign=""top"" align=""center"">
+                    Follow <a href=""http://twitter.com/optechx"" style=""color: #999999; font-size: 12px; text-align: center; text-decoration: none;"">@OptechX</a> on&nbsp;Twitter.
+                  </td>
+                </tr>
+              </table>
+            </div>
+            <!-- END FOOTER -->
+
+          </div>
+        </td>
+        <td style=""font-family: sans-serif; font-size: 14px; vertical-align: top;"" valign=""top"">&nbsp;</td>
+      </tr>
+    </table>
+  </body>
+</html>";
         }
         else
         {
@@ -391,10 +561,8 @@ public class AccountService : IAccountService
 
         _emailService.Send(
             to: account.Email,
-            subject: "Sign-up Verification API - Verify Email",
-            html: $@"<h4>Verify Email</h4>
-                        <p>Thanks for registering!</p>
-                        {message}"
+            subject: "OptechX Account Verification",
+            html: message
         );
     }
 

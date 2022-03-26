@@ -2,7 +2,7 @@ namespace WebApi.Models.Accounts;
 
 using System.ComponentModel.DataAnnotations;
 
-public class AuthenticateRequest
+public class LoginRequest
 {
     [Required]
     [EmailAddress]

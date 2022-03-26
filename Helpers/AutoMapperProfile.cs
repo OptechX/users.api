@@ -11,9 +11,9 @@ public class AutoMapperProfile : Profile
     {
         CreateMap<Account, AccountResponse>();
 
-        CreateMap<Account, AuthenticateResponse>();
+        CreateMap<Account, LoginResponse>();
 
-        CreateMap<RegisterRequest, Account>();
+        CreateMap<SignUpRequest, Account>();
 
         CreateMap<CreateRequest, Account>();
 

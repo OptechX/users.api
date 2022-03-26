@@ -20,7 +20,7 @@ public class AccountsController : BaseController
 
     [AllowAnonymous]
     [HttpPost("login")]
-    public ActionResult<AuthenticateResponse> Authenticate(AuthenticateRequest model)
+    public ActionResult<LoginResponse> Authenticate(LoginRequest model)
     {
         var response = _accountService.Authenticate(model, ipAddress());
         setTokenCookie(response.RefreshToken);
@@ -29,7 +29,7 @@ public class AccountsController : BaseController
 
     [AllowAnonymous]
     [HttpPost("refresh-token")]
-    public ActionResult<AuthenticateResponse> RefreshToken()
+    public ActionResult<LoginResponse> RefreshToken()
     {
         var refreshToken = Request.Cookies["refreshToken"];
         var response = _accountService.RefreshToken(refreshToken, ipAddress());
@@ -56,7 +56,7 @@ public class AccountsController : BaseController
 
     [AllowAnonymous]
     [HttpPost("signup")]
-    public IActionResult Register(RegisterRequest model)
+    public IActionResult Register(SignUpRequest model)
     {
         _accountService.Register(model, Request.Headers["origin"]);
         return Ok(new { message = "Registration successful, please check your email for verification instructions" });

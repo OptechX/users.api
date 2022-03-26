@@ -9,10 +9,25 @@ public class UpdateRequest
     private string _confirmPassword;
     private string _role;
     private string _email;
+    private string _country;
 
     public string Company { get; set; }
+    public string TaxID { get; set; }
     public string FirstName { get; set; }
     public string LastName { get; set; }
+    public string Phone { get; set; }
+    public string Address { get; set; }
+    public string City { get; set; }
+    public string State { get; set; }
+    public string PostCodeZip { get; set; }
+    public bool AccountNotifications { get; set; }
+
+    [EnumDataType(typeof(Country))]
+    public string Country
+    {
+        get => _country;
+        set => _country = replaceEmptyWithNull(value);
+    }
 
     [EnumDataType(typeof(Role))]
     public string Role
@@ -28,7 +43,7 @@ public class UpdateRequest
         set => _email = replaceEmptyWithNull(value);
     }
 
-    [MinLength(6)]
+    [MinLength(8)]
     public string Password
     {
         get => _password;
