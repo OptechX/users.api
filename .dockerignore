@@ -11,6 +11,8 @@ clean_db.ps1
 .gitignore
 README.md
 LICENSE
+appsettings.dev.json
+webassets/
 
 # User-specific files
 *.suo
