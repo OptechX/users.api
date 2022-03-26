@@ -1,11 +1,8 @@
+using Microsoft.Extensions.Configuration;
 using System.ComponentModel.DataAnnotations;
 using Stripe;
 
 namespace WebApi.Models.Accounts;
-
-
-
-
 
 public class SignUpRequest
 {
@@ -35,6 +32,13 @@ public class SignUpRequest
 
     public SignUpRequest()
     {
+        var config = new ConfigurationBuilder()
+            .SetBasePath(Directory.GetCurrentDirectory())
+            .AddJsonFile("appsettings.json").Build();
+        StripeConfiguration.ApiKey = config["AppSettings:StripeSecretKey"];
+        var options = new CustomerCreateOptions();
+        var service = new CustomerService();
+        var x = service.Create(options);
         this.UUID = Guid.NewGuid();
         this.UserIcon = string.Empty;
         this.AccountTier = "Basic";
@@ -54,11 +58,6 @@ public class SignUpRequest
         this.ImagesRemaining = 0;
         this.AppLockerStorageAvailable = 0;
         this.AccountNotifications = true;
-
-        StripeConfiguration.ApiKey = "sk_test_51HiceVKcwfnufCukKN5vxeiP2Pmq8WOnLA1mUJa0yaDru7JTCh8igYLh9NJOmzk2KI6McyNZK5cqSQLrDEeLBPj700LZndqBLm";
-        var options = new CustomerCreateOptions();
-        var service = new CustomerService();
-        var x = service.Create(options);
         this.StripeCustomerId = x.Id.ToString();
     }
 
