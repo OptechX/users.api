@@ -1,6 +1,11 @@
+using System.ComponentModel.DataAnnotations;
+using Stripe;
+
 namespace WebApi.Models.Accounts;
 
-using System.ComponentModel.DataAnnotations;
+
+
+
 
 public class SignUpRequest
 {
@@ -24,7 +29,8 @@ public class SignUpRequest
     public int AppLockerStorageAvailable;
     public int AppLockerStorageUsed;
     public string MSEnterpriseAgreementNumber;
-    public string StripePaymentToken;
+    public string StripeCustomerId;
+    public string StripePaymentId;
     public bool AccountNotifications;
 
     public SignUpRequest()
@@ -48,7 +54,12 @@ public class SignUpRequest
         this.ImagesRemaining = 0;
         this.AppLockerStorageAvailable = 0;
         this.AccountNotifications = true;
-        this.StripePaymentToken = string.Empty;
+
+        StripeConfiguration.ApiKey = "sk_test_51HiceVKcwfnufCukKN5vxeiP2Pmq8WOnLA1mUJa0yaDru7JTCh8igYLh9NJOmzk2KI6McyNZK5cqSQLrDEeLBPj700LZndqBLm";
+        var options = new CustomerCreateOptions();
+        var service = new CustomerService();
+        var x = service.Create(options);
+        this.StripeCustomerId = x.Id.ToString();
     }
 
     [Required]
