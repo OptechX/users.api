@@ -31,8 +31,8 @@ public class Account
     public int ServiceLevelResponseMinutes { get; set; }
     public Guid EnterpriseAgreement { get; set; }
     public string MSEnterpriseAgreementNumber { get; set; }
-    public string StripeCustomerId;
-    public string StripePaymentId;
+    public string StripeCustomerId { get; set; }
+    public string StripePaymentId { get; set; }
     public BillingType BillingType { get; set; }
     public AccountTier AccountTier { get; set; }
     public int ImagesRemaining { get; set; }
