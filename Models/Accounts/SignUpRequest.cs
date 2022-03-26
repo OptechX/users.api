@@ -4,14 +4,52 @@ using System.ComponentModel.DataAnnotations;
 
 public class SignUpRequest
 {
-    //[Required]
-    public string Company { get; set; }
+    public string Company;
+    public string TaxID;
+    public string FirstName;
+    public string LastName;
+    public string Phone;
+    public string Address;
+    public string City;
+    public string State;
+    public string PostCodeZip;
+    public string AccountTier;
+    public string VipStatus;
+    public int ServiceLevelResponseMinutes;
+    public string UserIcon;
+    public Guid EnterpriseAgreement;
+    public Guid UUID;
+    public string BillingType;
+    public int ImagesRemaining;
+    public int AppLockerStorageAvailable;
+    public int AppLockerStorageUsed;
+    public string MSEnterpriseAgreementNumber;
+    public string StripePaymentToken;
+    public bool AccountNotifications;
 
-    //[Required]
-    public string FirstName { get; set; }
-
-    //[Required]
-    public string LastName { get; set; }
+    public SignUpRequest()
+    {
+        this.UUID = Guid.NewGuid();
+        this.UserIcon = string.Empty;
+        this.AccountTier = "Basic";
+        this.Company = string.Empty;
+        this.TaxID = string.Empty;
+        this.FirstName = string.Empty;
+        this.LastName = string.Empty;
+        this.Phone = string.Empty;
+        this.Address = string.Empty;
+        this.City = string.Empty;
+        this.State = string.Empty;
+        this.PostCodeZip = string.Empty;
+        this.VipStatus = "No";
+        this.ServiceLevelResponseMinutes = 4320;
+        this.EnterpriseAgreement = Guid.Parse("00000000-0000-0000-0000-000000000000");
+        this.BillingType = "None";
+        this.ImagesRemaining = 0;
+        this.AppLockerStorageAvailable = 0;
+        this.AccountNotifications = true;
+        this.StripePaymentToken = string.Empty;
+    }
 
     [Required]
     [EmailAddress]
@@ -22,6 +60,7 @@ public class SignUpRequest
     public string Password { get; set; }
 
     [Required]
+    [MinLength(8)]
     [Compare("Password")]
     public string ConfirmPassword { get; set; }
 
