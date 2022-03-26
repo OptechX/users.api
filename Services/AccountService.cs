@@ -514,7 +514,7 @@ public class AccountService : IAccountService
                         <p style=""font-family: sans-serif; font-size: 14px; font-weight: normal; margin: 0; margin-bottom: 15px;"">If you have problems, please paste the URL below into your web browser.</p>
                         <p style=""font-family: sans-serif; font-size: 14px; font-weight: normal; margin: 0; margin-bottom: 15px;"">Please use the below token to verify your email address with the <code>/accounts/verify-email</code> api route:<p><code>{account.VerificationToken}</code></p></p>
                             
-                        <p style=""font-family: sans-serif; font-size: 14px; font-weight: normal; margin: 0; margin-bottom: 15px;"">Good luck!</p>
+                        <p style=""font-family: sans-serif; font-size: 14px; font-weight: normal; margin: 0; margin-bottom: 15px;"">Welcome aboard!</p>
                       </td>
                     </tr>
                   </table>
