@@ -32,13 +32,15 @@ public class SignUpRequest
 
     public SignUpRequest()
     {
+        // stripe create user account
         var config = new ConfigurationBuilder()
             .SetBasePath(Directory.GetCurrentDirectory())
             .AddJsonFile("appsettings.json").Build();
         StripeConfiguration.ApiKey = config["AppSettings:StripeSecretKey"];
         var options = new CustomerCreateOptions();
         var service = new CustomerService();
-        var x = service.Create(options);
+        var stripeCust = service.Create(options);
+
         this.UUID = Guid.NewGuid();
         this.UserIcon = string.Empty;
         this.AccountTier = "Basic";
@@ -58,7 +60,7 @@ public class SignUpRequest
         this.ImagesRemaining = 0;
         this.AppLockerStorageAvailable = 0;
         this.AccountNotifications = true;
-        this.StripeCustomerId = x.Id.ToString();
+        this.StripeCustomerId = stripeCust.Id.ToString();
     }
 
     [Required]
