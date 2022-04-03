@@ -58,7 +58,12 @@ using (var scope = app.Services.CreateScope())
     // custom jwt auth middleware
     app.UseMiddleware<JwtMiddleware>();
 
+    // add static serve page
+    app.UseDefaultFiles();
+    app.UseStaticFiles();
+
     app.MapControllers();
 }
+
 
 app.Run("http://0.0.0.0:4000");
