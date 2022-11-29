@@ -43,7 +43,7 @@ using (var scope = app.Services.CreateScope())
 {
     // generated swagger json and swagger ui middleware
     app.UseSwagger();
-    app.UseSwaggerUI(x => x.SwaggerEndpoint("/swagger/v1/swagger.json", ".NET Sign-up and Verification API"));
+    app.UseSwaggerUI(x => x.SwaggerEndpoint("/swagger/v1/swagger.json", "OptechX API User v0.2-rc.1a"));
 
     // global cors policy
     app.UseCors(x => x

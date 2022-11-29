@@ -1,0 +1,72 @@
+# This workflow will build a .NET project
+# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-net
+
+name: DEV BUILD DEPLOY
+
+on:
+  push:
+    branches: [ "dev" ]
+  pull_request:
+    branches: [ "dev" ]
+
+env:
+  DOCKER_BUILD_VERSION: 0.2-rc.1a
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v3
+      with:
+        dotnet-version: 6.0.x
+    - name: Restore dependencies
+      run: dotnet restore ./api.engine-v2.sln
+    - name: Build
+      run: dotnet build --no-restore ./api.engine-v2.sln
+    - name: Test
+      run: dotnet test --no-build --verbosity normal ./api.engine-v2.sln
+
+  docker-build:
+    needs: [ "build" ]
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - name: Docker Local Build
+      run: |
+        docker build --rm --no-cache --tag repasscloud/optechx.api.users:test --file Dockerfile.local .
+
+  deploy:
+    needs: [ "build", "docker-build" ]
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - name: Login to Dockerhub
+      run: |
+        echo -e "3sFVrUGxt7HbrbBUbB2kX9UBQWcA" | docker login -u danijeljw --password-stdin
+    - name: Build docker image
+      run: |
+        docker build --rm --no-cache --tag "repasscloud/optechx.api.users:$DOCKER_BUILD_VERSION" --file Dockerfile.local .
+        docker tag "repasscloud/optechx.api.users:$DOCKER_BUILD_VERSION" "repasscloud/optechx.api.users"
+    - name: Push to Dockerhub
+      run: |
+        docker image push "repasscloud/optechx.api.users:$DOCKER_BUILD_VERSION"
+        docker image push "repasscloud/optechx.api.users"
+    - name: Setup SSH
+      run: |
+        chmod 700 ./secrets
+        chmod 400 ./secrets/user_host_rsa
+    - name: Update dev server
+      run: |
+        ssh -o "StrictHostKeyChecking=no" -i ./secrets/user_host_rsa admin-rpc@engine.api.dev.optechx-data.com 'docker compose down; docker network prune --force; docker network create web; docker network create --internal caddy_internal; docker rmi repasscloud/optechx.api.users; docker compose up -d'
+
+  auto-pull-request:
+    needs: [ "docker-build" ]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: create pull request
+        run: gh pr create -B main -H dev --title 'Auto PR dev into main' --body 'Automatically created by gh-actions.'
+        env:
+          GITHUB_TOKEN: ${{ secrets.PAT }}
