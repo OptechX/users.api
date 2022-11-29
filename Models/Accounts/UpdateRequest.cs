@@ -9,7 +9,7 @@ public class UpdateRequest
     private string _confirmPassword;
     private string _role;
     private string _email;
-    private string _country;
+    //private string _country;
 
     public string Company { get; set; }
     public string TaxID { get; set; }
@@ -21,13 +21,14 @@ public class UpdateRequest
     public string State { get; set; }
     public string PostCodeZip { get; set; }
     public bool AccountNotifications { get; set; }
+    public string Country { get; set; }
 
-    [EnumDataType(typeof(Country))]
-    public string Country
-    {
-        get => _country;
-        set => _country = replaceEmptyWithNull(value);
-    }
+    // [EnumDataType(typeof(Country))]
+    // public string Country
+    // {
+    //     get => _country;
+    //     set => _country = replaceEmptyWithNull(value);
+    // }
 
     [EnumDataType(typeof(Role))]
     public string Role
