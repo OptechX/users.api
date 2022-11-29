@@ -22,11 +22,11 @@ jobs:
       with:
         dotnet-version: 6.0.x
     - name: Restore dependencies
-      run: dotnet restore ./api.engine-v2.sln
+      run: dotnet restore ./WebApi.sln
     - name: Build
-      run: dotnet build --no-restore ./api.engine-v2.sln
+      run: dotnet build --no-restore ./WebApi.sln
     - name: Test
-      run: dotnet test --no-build --verbosity normal ./api.engine-v2.sln
+      run: dotnet test --no-build --verbosity normal ./WebApi.sln
 
   docker-build:
     needs: [ "build" ]
