@@ -13,7 +13,7 @@ env:
   DOCKER_BUILD_VERSION: 0.2-rc.1a
 
 jobs:
-  build:
+  dotnet-build:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
@@ -47,7 +47,7 @@ jobs:
         echo -e "3sFVrUGxt7HbrbBUbB2kX9UBQWcA" | docker login -u danijeljw --password-stdin
     - name: Build docker image
       run: |
-        docker build --rm --no-cache --tag "repasscloud/optechx.api.users:$DOCKER_BUILD_VERSION" --file Dockerfile.local .
+        docker build --rm --no-cache --tag "repasscloud/optechx.api.users:$DOCKER_BUILD_VERSION" --file Dockerfile.prod .
         docker tag "repasscloud/optechx.api.users:$DOCKER_BUILD_VERSION" "repasscloud/optechx.api.users"
     - name: Push to Dockerhub
       run: |
