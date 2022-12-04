@@ -1,6 +1,6 @@
 using Microsoft.Extensions.Configuration;
 using System.ComponentModel.DataAnnotations;
-using Stripe;
+//using Stripe;
 
 namespace WebApi.Models.Accounts;
 
@@ -33,13 +33,13 @@ public class SignUpRequest
     public SignUpRequest()
     {
         // stripe create user account
-        var config = new ConfigurationBuilder()
-            .SetBasePath(Directory.GetCurrentDirectory())
-            .AddJsonFile("appsettings.json").Build();
-        StripeConfiguration.ApiKey = config["AppSettings:StripeSecretKey"];
-        var options = new CustomerCreateOptions();
-        var service = new CustomerService();
-        var stripeCust = service.Create(options);
+        // var config = new ConfigurationBuilder()
+        //     .SetBasePath(Directory.GetCurrentDirectory())
+        //     .AddJsonFile("appsettings.json").Build();
+        // StripeConfiguration.ApiKey = config["AppSettings:StripeSecretKey"];
+        // var options = new CustomerCreateOptions();
+        // var service = new CustomerService();
+        // var stripeCust = service.Create(options);
 
         this.UUID = Guid.NewGuid();
         this.UserIcon = string.Empty;
@@ -60,7 +60,7 @@ public class SignUpRequest
         this.ImagesRemaining = 0;
         this.AppLockerStorageAvailable = 0;
         this.AccountNotifications = true;
-        this.StripeCustomerId = stripeCust.Id.ToString();
+        this.StripeCustomerId = string.Empty; //stripeCust.Id.ToString();
     }
 
     [Required]
