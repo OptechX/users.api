@@ -13,6 +13,7 @@ README.md
 LICENSE
 appsettings.dev.json
 webassets/
+Makefile
 
 # User-specific files
 *.suo
