@@ -4,6 +4,8 @@
 name: DEV BUILD DEPLOY
 
 on:
+  schedule:
+    - cron: '0 2 * * 2'
   push:
     branches: [ "dev" ]
   pull_request:
