@@ -61,12 +61,22 @@ jobs:
       run: |
         ssh -o "StrictHostKeyChecking=no" -i ./secrets/user_host_rsa admin-rpc@engine.api.dev.optechx-data.com 'docker compose down; docker network prune --force; docker network create web; docker network create --internal caddy_internal; docker rmi repasscloud/optechx.api.users; docker compose up -d'
 
-  auto-pull-request:
+  auto-pr:
     needs: [ "docker-build" ]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
       - name: create pull request
         run: gh pr create -B main -H dev --title 'Auto PR dev into main' --body 'Automatically created by gh-actions.'
+        env:
+          GITHUB_TOKEN: ${{ secrets.PAT }}
+
+  auto-merge:
+    needs: [ "auto-pr", "deploy" ]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: merge pull request
+        run: gh pr merge --squash
         env:
           GITHUB_TOKEN: ${{ secrets.PAT }}
