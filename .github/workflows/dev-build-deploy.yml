@@ -65,14 +65,14 @@ jobs:
         ssh -o "StrictHostKeyChecking=no" -i ./secrets/user_host_rsa admin-rpc@engine.api.dev.optechx-data.com 'docker compose down; docker network prune --force; docker network create web; docker network create --internal caddy_internal; docker rmi repasscloud/optechx.api.users; docker compose up -d'
 
   pre-pr:
-    needs: [ "deploy" ]
+    needs: [ "docker-deploy" ]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
         with:
-          repository: repasscloud/optechx.api.users.git
-          token: ${{ secrets.PAT }}
           fetch-depth: 0
+          # repository: repasscloud/optechx.api.users.git
+          # token: ${{ secrets.PAT }}
 
       - name: Create report file
         run: date +%Y%m%d%H%M%S > ./report.txt
