@@ -41,7 +41,7 @@ jobs:
         docker build --rm --no-cache --tag repasscloud/optechx.api.users:test --file Dockerfile.local .
 
   deploy:
-    needs: [ "dotnet-build", "docker-build" ]
+    needs: [ "docker-build" ]
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
@@ -65,7 +65,7 @@ jobs:
         ssh -o "StrictHostKeyChecking=no" -i ./secrets/user_host_rsa admin-rpc@engine.api.dev.optechx-data.com 'docker compose down; docker network prune --force; docker network create web; docker network create --internal caddy_internal; docker rmi repasscloud/optechx.api.users; docker compose up -d'
 
   pre-pr:
-    needs: [ "deploy" ]
+    needs: [ "docker-build" ]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
