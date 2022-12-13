@@ -1,4 +1,3 @@
-
 # Created by https://www.gitignore.io/api/csharp
 
 ### Csharp ###
@@ -14,6 +13,10 @@ LICENSE
 appsettings.dev.json
 webassets/
 Makefile
+report.txt
+CHANGELOG.md
+install_frameworks.ps1
+
 
 # User-specific files
 *.suo
