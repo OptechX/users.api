@@ -79,6 +79,7 @@ jobs:
 
       - name: Push updates to optechx.api.users repo
         run: |
+          git pull
           updates=$(date +%Y%m%d%H%M%S)
           git config user.name 'Auto Commit'
           git config user.email 'auto-commit@users.noreply.github.com'
@@ -98,7 +99,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.PAT }}
 
   auto-merge:
-    needs: [ "auto-pr", "deploy" ]
+    needs: [ "auto-pr" ]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
