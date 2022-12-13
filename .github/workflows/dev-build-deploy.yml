@@ -10,6 +10,7 @@ on:
     branches: [ "dev" ]
   pull_request:
     branches: [ "dev" ]
+  workflow_dispatch:
 
 env:
   DOCKER_BUILD_VERSION: 0.2-rc.1a
@@ -63,8 +64,34 @@ jobs:
       run: |
         ssh -o "StrictHostKeyChecking=no" -i ./secrets/user_host_rsa admin-rpc@engine.api.dev.optechx-data.com 'docker compose down; docker network prune --force; docker network create web; docker network create --internal caddy_internal; docker rmi repasscloud/optechx.api.users; docker compose up -d'
 
-  auto-pr:
+  pre-pr:
     needs: [ "docker-build" ]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Clone repo
+        run: | 
+          git clone https://github.com/repasscloud/optechx.api.user.git
+
+      - name: Create report file
+        run: date +%Y%m%d%H%M%S > report.txt
+      
+      - name: Push updates to optechx.api.user repo
+        run: |
+          updates=$(date +%Y%m%d%H%M%S)
+          git -C ./optechx.api.user config user.name 'Auto Commit'
+          git -C ./optechx.api.user config user.email 'auto-commit@users.noreply.github.com'
+          git -C ./optechx.api.user remote set-url origin https://x-access-token:${{ secrets.PAT }}@github.com/OptechX/optechx.api.user
+          git -C ./optechx.api.user add .
+          git -C ./optechx.api.user commit -m "$updates"
+          git -C ./optechx.api.user push
+          rm -rf ./optechx.api.user
+
+  auto-pr:
+    needs: [ "pre-pr" ]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
