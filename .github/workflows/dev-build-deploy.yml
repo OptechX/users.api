@@ -74,20 +74,20 @@ jobs:
 
       - name: Clone repo
         run: | 
-          git clone https://github.com/repasscloud/optechx.api.user.git
+          git clone https://github.com/repasscloud/optechx.api.users.git
 
       - name: Create report file
         run: date +%Y%m%d%H%M%S > report.txt
       
-      - name: Push updates to optechx.api.user repo
+      - name: Push updates to optechx.api.usersrepo
         run: |
           updates=$(date +%Y%m%d%H%M%S)
-          git -C ./optechx.api.user config user.name 'Auto Commit'
-          git -C ./optechx.api.user config user.email 'auto-commit@users.noreply.github.com'
-          git -C ./optechx.api.user remote set-url origin https://x-access-token:${{ secrets.PAT }}@github.com/OptechX/optechx.api.user
-          git -C ./optechx.api.user add .
-          git -C ./optechx.api.user commit -m "$updates"
-          git -C ./optechx.api.user push
+          git -C ./optechx.api.usersconfig user.name 'Auto Commit'
+          git -C ./optechx.api.usersconfig user.email 'auto-commit@users.noreply.github.com'
+          git -C ./optechx.api.usersremote set-url origin https://x-access-token:${{ secrets.PAT }}@github.com/OptechX/optechx.api.user
+          git -C ./optechx.api.usersadd .
+          git -C ./optechx.api.userscommit -m "$updates"
+          git -C ./optechx.api.userspush
           rm -rf ./optechx.api.user
 
   auto-pr:
