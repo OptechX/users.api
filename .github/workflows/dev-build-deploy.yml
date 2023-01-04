@@ -29,15 +29,15 @@ jobs:
           dotnet tool install --global dotnet-ef
           export PATH="$PATH:$HOME/.dotnet/tools"
 
-      - name: 🔐 Decrypt appsettings.json
-        run: ./decrypt_appsettings.sh
-        env:
-          LARGE_SECRET_PASSPHRASE: ${{ secrets.LARGE_SECRET_PHRASE }}
+      # - name: 🔐 Decrypt appsettings.json
+      #   run: ./decrypt_appsettings.sh
+      #   env:
+      #     LARGE_SECRET_PASSPHRASE: ${{ secrets.LARGE_SECRET_PHRASE }}
           
-      - name: 🔐 Decrypt Controllers
-        run: ./decrypt_Controllers.sh
-        env:
-          LARGE_SECRET_PASSPHRASE: ${{ secrets.LARGE_SECRET_PHRASE }}
+      # - name: 🔐 Decrypt Controllers
+      #   run: ./decrypt_Controllers.sh
+      #   env:
+      #     LARGE_SECRET_PASSPHRASE: ${{ secrets.LARGE_SECRET_PHRASE }}
 
       - name: 🧶 Restore dependencies
         run: dotnet restore ./WebApi.sln
