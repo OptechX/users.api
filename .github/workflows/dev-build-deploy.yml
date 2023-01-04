@@ -126,7 +126,10 @@ jobs:
         run: docker build --rm --no-cache --tag "$DOCKER_IMAGE_NAME:$DOCKER_BUILD_VERSION" --file Dockerfile.prod .
 
   pre-pr:
-    needs: [ "docker-build" ]
+    needs:
+      - docker-build-dev
+      - docker-build-local
+      - docker-build-prod
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
