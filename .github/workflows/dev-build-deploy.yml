@@ -1,68 +1,129 @@
-# This workflow will build a .NET project
-# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-net
-
-name: DEV BUILD DEPLOY
+name: DEV Branch Tasks
 
 on:
-  schedule:
-    - cron: '0 2 * * 2'
   push:
     branches: [ "dev" ]
-  pull_request:
-    branches: [ "dev" ]
+  schedule:
+    - cron: '0 2 * * 2'
   workflow_dispatch:
 
+
 env:
-  DOCKER_BUILD_VERSION: 0.2-rc.1a
+  DOCKER_BUILD_VERSION: "2.0"
+  DOCKER_IMAGE_NAME: "repasscloud/optechx.users.api.prod"
 
 jobs:
   dotnet-build:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v3
-    - name: Setup .NET
-      uses: actions/setup-dotnet@v3
-      with:
-        dotnet-version: 6.0.x
-    - name: Restore dependencies
-      run: dotnet restore ./WebApi.sln
-    - name: Build
-      run: dotnet build --no-restore ./WebApi.sln
-    - name: Test
-      run: dotnet test --no-build --verbosity normal ./WebApi.sln
+      - name: 🛒 Checkout
+        uses: actions/checkout@v3
 
-  docker-build:
+      - name: 🚀 Setup .NET
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: 6.0.x
+
+      - name: 🚀 Install dotnet-ef Tools
+        run: |
+          mv ./docker-compose.dcproj ./docker-compose.dcproj_
+          dotnet tool install --global dotnet-ef
+          export PATH="$PATH:$HOME/.dotnet/tools"
+          mv ./docker-compose.dcproj_ ./docker-compose.dcproj
+
+      - name: 🔐 Decrypt appsettings.json
+        run: ./decrypt_appsettings.sh
+        env:
+          LARGE_SECRET_PASSPHRASE: ${{ secrets.LARGE_SECRET_PHRASE }}
+          
+      - name: 🔐 Decrypt Controllers
+        run: ./decrypt_Controllers.sh
+        env:
+          LARGE_SECRET_PASSPHRASE: ${{ secrets.LARGE_SECRET_PHRASE }}
+
+      - name: 🧶 Restore dependencies
+        run: dotnet restore ./WebApi.sln
+
+      - name: 🏗️ DotNet Build
+        run: dotnet build --no-restore ./WebApi.sln
+
+      - name: 🧪 DotNet Test
+        run: dotnet test --no-build --verbosity normal ./WebApi.sln
+
+      - name: 🚀 Generate migrations
+        run: dotnet ef migrations add AddLookupTables
+
+
+  docker-build-dev:
     needs: [ "dotnet-build" ]
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v3
-    - name: Docker Local Build
-      run: |
-        docker build --rm --no-cache --tag repasscloud/optechx.api.users:test --file Dockerfile.local .
+      - name: 🛒 Checkout
+        uses: actions/checkout@v3
 
-  deploy:
-    needs: [ "docker-build" ]
+      # - name: 🔐 Decrypt appsettings.json
+      #   run: ./decrypt_appsettings.sh
+      #   env:
+      #     LARGE_SECRET_PASSPHRASE: ${{ secrets.LARGE_SECRET_PHRASE }}
+          
+      # - name: 🔐 Decrypt Controllers
+      #   run: ./decrypt_Controllers.sh
+      #   env:
+      #     LARGE_SECRET_PASSPHRASE: ${{ secrets.LARGE_SECRET_PHRASE }}
+
+      - name: 🐳🏗️ Docker .local Build
+        run: docker build --rm --no-cache --tag $DOCKER_IMAGE_NAME:$DOCKER_BUILD_VERSION --file Dockerfile.dev .
+
+  docker-build-local:
+    needs: [ "dotnet-build" ]
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v3
-    - name: Login to Dockerhub
-      run: |
-        echo -e "3sFVrUGxt7HbrbBUbB2kX9UBQWcA" | docker login -u danijeljw --password-stdin
-    - name: Build docker image
-      run: |
-        docker build --rm --no-cache --tag "repasscloud/optechx.api.users:$DOCKER_BUILD_VERSION" --file Dockerfile.prod .
-        docker tag "repasscloud/optechx.api.users:$DOCKER_BUILD_VERSION" "repasscloud/optechx.api.users"
-    - name: Push to Dockerhub
-      run: |
-        docker image push "repasscloud/optechx.api.users:$DOCKER_BUILD_VERSION"
-        docker image push "repasscloud/optechx.api.users"
-    - name: Setup SSH
-      run: |
-        chmod 700 ./secrets
-        chmod 400 ./secrets/user_host_rsa
-    - name: Update dev server
-      run: |
-        ssh -o "StrictHostKeyChecking=no" -i ./secrets/user_host_rsa admin-rpc@engine.api.dev.optechx-data.com 'docker compose down; docker network prune --force; docker network create web; docker network create --internal caddy_internal; docker rmi repasscloud/optechx.api.users; docker compose up -d'
+      - name: 🛒 Checkout
+        uses: actions/checkout@v3
+
+      # - name: 🔐 Decrypt appsettings.json
+      #   run: ./decrypt_appsettings.sh
+      #   env:
+      #     LARGE_SECRET_PASSPHRASE: ${{ secrets.LARGE_SECRET_PHRASE }}
+          
+      # - name: 🔐 Decrypt Controllers
+      #   run: ./decrypt_Controllers.sh
+      #   env:
+      #     LARGE_SECRET_PASSPHRASE: ${{ secrets.LARGE_SECRET_PHRASE }}
+
+      - name: 🐳🏗️ Docker .local Build
+        run: docker build --rm --no-cache --tag $DOCKER_IMAGE_NAME:$DOCKER_BUILD_VERSION --file Dockerfile.local .
+
+
+  docker-build-prod:
+    needs: [ "dotnet-build" ]
+    runs-on: ubuntu-latest
+    steps:
+      - name: 🛒 Checkout
+        uses: actions/checkout@v3
+
+      # - name: 🔐 Decrypt appsettings.json
+      #   run: ./decrypt_appsettings.sh
+      #   env:
+      #     LARGE_SECRET_PASSPHRASE: ${{ secrets.LARGE_SECRET_PHRASE }}
+          
+      # - name: 🔐 Decrypt Controllers
+      #   run: ./decrypt_Controllers.sh
+      #   env:
+      #     LARGE_SECRET_PASSPHRASE: ${{ secrets.LARGE_SECRET_PHRASE }}
+
+      - name: ✍️ Remove Line 12 from launchSettings.json
+        run: sed -i.bak -e '12d' Properties/launchSettings.json
+    
+      - name: ❌ Remove backup of launchSettings.json
+        run: |
+          FILE=Properties/launchSettings.json
+          if [ -f "$FILE" ]; then
+            rm Properties/launchSettings.json.bak
+          fi
+
+      - name: 🐳🏗️ Docker .prod Build
+        run: docker build --rm --no-cache --tag "$DOCKER_IMAGE_NAME:$DOCKER_BUILD_VERSION" --file Dockerfile.prod .
 
   pre-pr:
     needs: [ "docker-build" ]
