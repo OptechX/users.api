@@ -1,8 +1,8 @@
 #!/bin/sh
 
 # define the encryption key
-DECRYPT_PASSWORD=Errant-Patchwork-Scoop5-Subsiding
-LARGE_SECRET_PASSPHRASE=$DECRYPT_PASSWORD
+DECRYPT_PASSWORD=X
+#LARGE_SECRET_PASSPHRASE=$DECRYPT_PASSWORD
 
 # declare array of files to encrypt  <~ does NOT use comma between articles!
 toEncrypt=("appsettings.json.gpg" "appsettings.dev.json.gpg" "secrets/user_host_rsa.gpg")
