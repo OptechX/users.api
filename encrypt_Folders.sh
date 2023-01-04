@@ -1,7 +1,7 @@
 #!/bin/sh
 
 # define the encryption key
-ENCRYPT_PASSWORD=Errant-Patchwork-Scoop5-Subsiding
+ENCRYPT_PASSWORD=X
 
 # declare array of files to encrypt  <~ does NOT use comma between articles!
 toEncrypt=("appsettings.json" "appsettings.dev.json" "secrets/user_host_rsa")
