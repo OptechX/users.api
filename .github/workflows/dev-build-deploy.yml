@@ -26,10 +26,8 @@ jobs:
 
       - name: 🚀 Install dotnet-ef Tools
         run: |
-          mv ./docker-compose.dcproj ./docker-compose.dcproj_
           dotnet tool install --global dotnet-ef
           export PATH="$PATH:$HOME/.dotnet/tools"
-          mv ./docker-compose.dcproj_ ./docker-compose.dcproj
 
       - name: 🔐 Decrypt appsettings.json
         run: ./decrypt_appsettings.sh
