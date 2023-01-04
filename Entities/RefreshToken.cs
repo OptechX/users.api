@@ -1,6 +1,7 @@
 namespace WebApi.Entities;
 
 using Microsoft.EntityFrameworkCore;
+using System;
 using System.ComponentModel.DataAnnotations;
 
 [Owned]

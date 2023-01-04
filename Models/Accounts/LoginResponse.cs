@@ -1,5 +1,6 @@
 namespace WebApi.Models.Accounts;
 
+using System;
 using System.Text.Json.Serialization;
 
 public class LoginResponse

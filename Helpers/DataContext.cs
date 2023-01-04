@@ -1,6 +1,7 @@
 namespace WebApi.Helpers;
 
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using WebApi.Entities;
 
 public class DataContext : DbContext

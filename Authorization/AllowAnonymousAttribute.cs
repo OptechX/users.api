@@ -1,3 +1,5 @@
+using System;
+
 namespace WebApi.Authorization;
 
 [AttributeUsage(AttributeTargets.Method)]
