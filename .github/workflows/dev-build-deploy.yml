@@ -26,20 +26,18 @@ jobs:
 
       - name: 🚀 Install dotnet-ef Tools
         run: |
-          mv ./docker-compose.dcproj ./docker-compose.dcproj_
           dotnet tool install --global dotnet-ef
           export PATH="$PATH:$HOME/.dotnet/tools"
-          mv ./docker-compose.dcproj_ ./docker-compose.dcproj
 
-      - name: 🔐 Decrypt appsettings.json
-        run: ./decrypt_appsettings.sh
-        env:
-          LARGE_SECRET_PASSPHRASE: ${{ secrets.LARGE_SECRET_PHRASE }}
+      # - name: 🔐 Decrypt appsettings.json
+      #   run: ./decrypt_appsettings.sh
+      #   env:
+      #     LARGE_SECRET_PASSPHRASE: ${{ secrets.LARGE_SECRET_PHRASE }}
           
-      - name: 🔐 Decrypt Controllers
-        run: ./decrypt_Controllers.sh
-        env:
-          LARGE_SECRET_PASSPHRASE: ${{ secrets.LARGE_SECRET_PHRASE }}
+      # - name: 🔐 Decrypt Controllers
+      #   run: ./decrypt_Controllers.sh
+      #   env:
+      #     LARGE_SECRET_PASSPHRASE: ${{ secrets.LARGE_SECRET_PHRASE }}
 
       - name: 🧶 Restore dependencies
         run: dotnet restore ./WebApi.sln
@@ -126,7 +124,10 @@ jobs:
         run: docker build --rm --no-cache --tag "$DOCKER_IMAGE_NAME:$DOCKER_BUILD_VERSION" --file Dockerfile.prod .
 
   pre-pr:
-    needs: [ "docker-build" ]
+    needs:
+      - docker-build-dev
+      - docker-build-local
+      - docker-build-prod
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
