@@ -1,10 +1,10 @@
 SHELL = /bin/sh
 
-PGPASSWORD = AVNS_PxGhH3eouQ-LOqkFyUB
-DBADMIN = doadmin
-DBDEFAULT = devusrdb1
-DBURI = db-postgresql-nyc1-80872-do-user-9791434-0.b.db.ondigitalocean.com
-PORT = 25060
+PGPASSWORD = X
+DBADMIN = X
+DBDEFAULT = X
+DBURI = X
+PORT = X
 
 build:
 	dotnet build
