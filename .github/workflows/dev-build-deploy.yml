@@ -181,6 +181,6 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: merge pull request
-        run: gh pr merge --squash
+        run: gh pr merge
         env:
           GITHUB_TOKEN: ${{ secrets.PAT }}
