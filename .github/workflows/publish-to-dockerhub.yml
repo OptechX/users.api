@@ -68,14 +68,8 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME_REPO }}
           password: ${{ secrets.DOCKERHUB_TOKEN_REPO }}
 
-      - name: 🔐 Decrypt Special
-        run: ./decrypt_Special.sh
-        env:
-          LARGE_SECRET_PASSPHRASE: ${{ secrets.LARGE_SECRET_PHRASE }}
-        shell: bash
-          
-      - name: 🔐 Decrypt All
-        run: ./decrypt_All.sh
+      - name: 🔐 Decrypt Repo
+        run: ./decrypt_repo.sh
         env:
           LARGE_SECRET_PASSPHRASE: ${{ secrets.LARGE_SECRET_PHRASE }}
         shell: bash

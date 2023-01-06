@@ -28,14 +28,8 @@ jobs:
           dotnet tool install --global dotnet-ef
           export PATH="$PATH:$HOME/.dotnet/tools"
 
-      - name: 🔐 Decrypt Special
-        run: ./decrypt_Special.sh
-        env:
-          LARGE_SECRET_PASSPHRASE: ${{ secrets.LARGE_SECRET_PHRASE }}
-        shell: bash
-          
-      - name: 🔐 Decrypt All
-        run: ./decrypt_All.sh
+      - name: 🔐 Decrypt Repo
+        run: ./decrypt_repo.sh
         env:
           LARGE_SECRET_PASSPHRASE: ${{ secrets.LARGE_SECRET_PHRASE }}
         shell: bash
@@ -60,14 +54,8 @@ jobs:
       - name: 🛒 Checkout
         uses: actions/checkout@v3
 
-      - name: 🔐 Decrypt Special
-        run: ./decrypt_Special.sh
-        env:
-          LARGE_SECRET_PASSPHRASE: ${{ secrets.LARGE_SECRET_PHRASE }}
-        shell: bash
-          
-      - name: 🔐 Decrypt All
-        run: ./decrypt_All.sh
+      - name: 🔐 Decrypt Repo
+        run: ./decrypt_repo.sh
         env:
           LARGE_SECRET_PASSPHRASE: ${{ secrets.LARGE_SECRET_PHRASE }}
         shell: bash
@@ -82,14 +70,8 @@ jobs:
       - name: 🛒 Checkout
         uses: actions/checkout@v3
 
-      - name: 🔐 Decrypt Special
-        run: ./decrypt_Special.sh
-        env:
-          LARGE_SECRET_PASSPHRASE: ${{ secrets.LARGE_SECRET_PHRASE }}
-        shell: bash
-          
-      - name: 🔐 Decrypt All
-        run: ./decrypt_All.sh
+      - name: 🔐 Decrypt Repo
+        run: ./decrypt_repo.sh
         env:
           LARGE_SECRET_PASSPHRASE: ${{ secrets.LARGE_SECRET_PHRASE }}
         shell: bash
@@ -105,14 +87,8 @@ jobs:
       - name: 🛒 Checkout
         uses: actions/checkout@v3
 
-      - name: 🔐 Decrypt Special
-        run: ./decrypt_Special.sh
-        env:
-          LARGE_SECRET_PASSPHRASE: ${{ secrets.LARGE_SECRET_PHRASE }}
-        shell: bash
-          
-      - name: 🔐 Decrypt All
-        run: ./decrypt_All.sh
+      - name: 🔐 Decrypt Repo
+        run: ./decrypt_repo.sh
         env:
           LARGE_SECRET_PASSPHRASE: ${{ secrets.LARGE_SECRET_PHRASE }}
         shell: bash
@@ -130,39 +106,42 @@ jobs:
       - name: 🐳🏗️ Docker .prod Build
         run: docker build --rm --no-cache --tag "$DOCKER_IMAGE_NAME:$DOCKER_BUILD_VERSION" --file Dockerfile.prod .
 
-  pre-pr:
+  # pre-pr:
+  #   needs:
+  #     - docker-build-dev
+  #     - docker-build-local
+  #     - docker-build-prod
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - uses: actions/checkout@v3
+  #       with:
+  #         fetch-depth: 0
+  #         # repository: repasscloud/optechx.api.users.git
+  #         # token: ${{ secrets.PAT }}
+
+  #     - name: ⚙️ Set git config
+  #       run: |
+  #         git config user.name 'Auto Commit'
+  #         git config user.email 'auto-commit@users.noreply.github.com'
+  #         git remote set-url origin https://x-access-token:${{ secrets.PAT }}@github.com/OptechX/users.api.git
+
+  #     - name: 📚 Create report file
+  #       run: |
+  #         datecode=$(date +%Y%m%d%H%M%S)
+  #         echo "$datecode" > ./report.txt
+
+  #     - name: 🥹 Push updates to OptechX/users.api repo
+  #       run: |
+  #         updates=`cat report.txt`
+  #         git add .
+  #         git commit -m "$updates"
+  #         git push
+
+  auto-pr:
     needs:
       - docker-build-dev
       - docker-build-local
       - docker-build-prod
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-        with:
-          fetch-depth: 0
-          # repository: repasscloud/optechx.api.users.git
-          # token: ${{ secrets.PAT }}
-
-      - name: ⚙️ Set git config
-        run: |
-          git config user.name 'Auto Commit'
-          git config user.email 'auto-commit@users.noreply.github.com'
-          git remote set-url origin https://x-access-token:${{ secrets.PAT }}@github.com/OptechX/users.api.git
-
-      - name: 📚 Create report file
-        run: |
-          datecode=$(date +%Y%m%d%H%M%S)
-          echo "$datecode" > ./report.txt
-
-      - name: 🥹 Push updates to OptechX/users.api repo
-        run: |
-          updates=`cat report.txt`
-          git add .
-          git commit -m "$updates"
-          git push
-
-  auto-pr:
-    needs: [ "pre-pr" ]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
