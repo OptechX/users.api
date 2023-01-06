@@ -17,6 +17,7 @@ report.txt
 CHANGELOG.md
 install_frameworks.ps1
 packs.txt
+*.sh
 
 
 # User-specific files
