@@ -1,0 +1,15 @@
+AutoMapper
+AutoMapper.Extensions.Microsoft.DependencyInjection
+BCrypt.Net-Next
+EFCore.NamingConventions
+MailKit
+Microsoft.AspNetCore.Authentication.JwtBearer
+Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore
+Microsoft.EntityFrameworkCore.Design
+Microsoft.EntityFrameworkCore.Sqlite
+Microsoft.EntityFrameworkCore.SqlServer
+Microsoft.VisualStudio.Web.CodeGeneration.Design
+Npgsql.EntityFrameworkCore.PostgreSQL
+Stripe.net
+Swashbuckle.AspNetCore
+System.IdentityModel.Tokens.Jwt
