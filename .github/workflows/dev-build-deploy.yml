@@ -33,11 +33,13 @@ jobs:
         run: ./decrypt_Special.sh
         env:
           LARGE_SECRET_PASSPHRASE: ${{ secrets.LARGE_SECRET_PHRASE }}
+        shell: bash
           
       - name: 🔐 Decrypt All
         run: ./decrypt_All.sh
         env:
           LARGE_SECRET_PASSPHRASE: ${{ secrets.LARGE_SECRET_PHRASE }}
+        shell: bash
 
       - name: 🧶 Restore dependencies
         run: dotnet restore ./WebApi.sln
@@ -63,11 +65,13 @@ jobs:
         run: ./decrypt_Special.sh
         env:
           LARGE_SECRET_PASSPHRASE: ${{ secrets.LARGE_SECRET_PHRASE }}
+        shell: bash
           
       - name: 🔐 Decrypt All
         run: ./decrypt_All.sh
         env:
           LARGE_SECRET_PASSPHRASE: ${{ secrets.LARGE_SECRET_PHRASE }}
+        shell: bash
 
       - name: 🐳🏗️ Docker .local Build
         run: docker build --rm --no-cache --tag $DOCKER_IMAGE_NAME:$DOCKER_BUILD_VERSION --file Dockerfile.dev .
@@ -83,11 +87,13 @@ jobs:
         run: ./decrypt_Special.sh
         env:
           LARGE_SECRET_PASSPHRASE: ${{ secrets.LARGE_SECRET_PHRASE }}
+        shell: bash
           
       - name: 🔐 Decrypt All
         run: ./decrypt_All.sh
         env:
           LARGE_SECRET_PASSPHRASE: ${{ secrets.LARGE_SECRET_PHRASE }}
+        shell: bash
 
       - name: 🐳🏗️ Docker .local Build
         run: docker build --rm --no-cache --tag $DOCKER_IMAGE_NAME:$DOCKER_BUILD_VERSION --file Dockerfile.local .
@@ -104,11 +110,13 @@ jobs:
         run: ./decrypt_Special.sh
         env:
           LARGE_SECRET_PASSPHRASE: ${{ secrets.LARGE_SECRET_PHRASE }}
+        shell: bash
           
       - name: 🔐 Decrypt All
         run: ./decrypt_All.sh
         env:
           LARGE_SECRET_PASSPHRASE: ${{ secrets.LARGE_SECRET_PHRASE }}
+        shell: bash
 
       - name: ✍️ Remove Line 12 from launchSettings.json
         run: sed -i.bak -e '12d' Properties/launchSettings.json
@@ -136,16 +144,20 @@ jobs:
           # repository: repasscloud/optechx.api.users.git
           # token: ${{ secrets.PAT }}
 
-      - name: Create report file
-        run: date +%Y%m%d%H%M%S > ./report.txt
-
-      - name: Push updates to optechx.api.users repo
+      - name: ⚙️ Set git config
         run: |
-          git pull
-          updates=$(date +%Y%m%d%H%M%S)
           git config user.name 'Auto Commit'
           git config user.email 'auto-commit@users.noreply.github.com'
-          git remote set-url origin https://x-access-token:${{ secrets.PAT }}@github.com/repasscloud/optechx.api.users
+          git remote set-url origin https://x-access-token:${{ secrets.PAT }}@github.com:OptechX/users.api.git
+
+      - name: 📚 Create report file
+        run: |
+          datecode=$(date +%Y%m%d%H%M%S)
+          "$datecode" > ./report.txt
+
+      - name: 🥹 Push updates to OptechX/users.api repo
+        run: |
+          updates=`cat report.txt`
           git add .
           git commit -m "$updates"
           git push
