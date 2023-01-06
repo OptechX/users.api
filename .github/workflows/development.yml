@@ -1,4 +1,4 @@
-name: DEV Branch Tasks
+name: Development Branch
 
 on:
   push:
