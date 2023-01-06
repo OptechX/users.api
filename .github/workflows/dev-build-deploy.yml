@@ -7,7 +7,6 @@ on:
     - cron: '0 2 * * 2'
   workflow_dispatch:
 
-
 env:
   DOCKER_BUILD_VERSION: "2.0"
   DOCKER_IMAGE_NAME: "repasscloud/optechx.users.api.prod"
@@ -167,7 +166,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - name: create pull request
+      
+      - name: Get updates from gh
+        run: git pull
+      
+      - name: Create pull request
         run: gh pr create -B main -H dev --title 'Auto PR dev into main' --body 'Automatically created by gh-actions.'
         env:
           GITHUB_TOKEN: ${{ secrets.PAT }}
