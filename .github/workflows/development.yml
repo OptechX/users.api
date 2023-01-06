@@ -159,7 +159,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - name: merge pull request --merge
-        run: gh pr merge
+      - name: merge pull request
+        run: gh pr merge --merge
         env:
           GITHUB_TOKEN: ${{ secrets.PAT }}
