@@ -153,7 +153,7 @@ jobs:
       - name: 📚 Create report file
         run: |
           datecode=$(date +%Y%m%d%H%M%S)
-          "$datecode" > ./report.txt
+          echo "$datecode" > ./report.txt
 
       - name: 🥹 Push updates to OptechX/users.api repo
         run: |
