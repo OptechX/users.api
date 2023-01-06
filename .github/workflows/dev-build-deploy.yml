@@ -148,12 +148,12 @@ jobs:
         run: |
           git config user.name 'Auto Commit'
           git config user.email 'auto-commit@users.noreply.github.com'
-          git remote set-url origin https://x-access-token:${{ secrets.PAT }}@github.com:OptechX/users.api.git
+          git remote set-url origin https://x-access-token:${{ secrets.PAT }}@github.com/OptechX/users.api.git
 
       - name: 📚 Create report file
         run: |
           datecode=$(date +%Y%m%d%H%M%S)
-          "$datecode" > ./report.txt
+          echo "$datecode" > ./report.txt
 
       - name: 🥹 Push updates to OptechX/users.api repo
         run: |
