@@ -22,3 +22,4 @@ jobs:
           xargs -n1 -I % gh api --silent repos/$user/$repo/actions/runs/% -X DELETE
         env:
           GITHUB_TOKEN: ${{ secrets.PAT }}
+        shell: bash
