@@ -1,0 +1,55 @@
+# This workflow will build a .NET project
+# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-net
+
+name: .NET
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  dotnet-build-main:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 🛒 Checkout
+        uses: actions/checkout@v3
+
+      - name: 🚀 Setup .NET
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: 6.0.x
+
+      - name: 🚀 Install dotnet-ef Tools
+        run: |
+          dotnet tool install --global dotnet-ef
+          export PATH="$PATH:$HOME/.dotnet/tools"
+
+      - name: 🔐 Decrypt Special
+        run: ./decrypt_Special.sh
+        env:
+          LARGE_SECRET_PASSPHRASE: ${{ secrets.LARGE_SECRET_PHRASE }}
+        shell: bash
+          
+      - name: 🔐 Decrypt All
+        run: ./decrypt_All.sh
+        env:
+          LARGE_SECRET_PASSPHRASE: ${{ secrets.LARGE_SECRET_PHRASE }}
+        shell: bash
+
+      - name: 🏃‍♂️ Run PowerShell script
+        run: ./install_frameworks.ps1
+        shell: pwsh
+        
+      - name: 🧶 Restore dependencies
+        run: dotnet restore ./WebApi.sln
+
+      - name: 🏗️ DotNet Build
+        run: dotnet build --no-restore ./WebApi.sln
+
+      - name: 🧪 DotNet Test
+        run: dotnet test --no-build --verbosity normal ./WebApi.sln
+
+      - name: 🚀 Generate migrations
+        run: dotnet ef migrations add AddLookupTables

@@ -1,0 +1,171 @@
+name: DEV Branch Tasks
+
+on:
+  push:
+    branches: [ "dev" ]
+  schedule:
+    - cron: '0 2 * * 2'
+  workflow_dispatch:
+
+
+env:
+  DOCKER_BUILD_VERSION: "2.0"
+  DOCKER_IMAGE_NAME: "repasscloud/optechx.users.api.prod"
+
+jobs:
+  dotnet-build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 🛒 Checkout
+        uses: actions/checkout@v3
+
+      - name: 🚀 Setup .NET
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: 6.0.x
+
+      - name: 🚀 Install dotnet-ef Tools
+        run: |
+          dotnet tool install --global dotnet-ef
+          export PATH="$PATH:$HOME/.dotnet/tools"
+
+      - name: 🔐 Decrypt Special
+        run: ./decrypt_Special.sh
+        env:
+          LARGE_SECRET_PASSPHRASE: ${{ secrets.LARGE_SECRET_PHRASE }}
+          
+      - name: 🔐 Decrypt All
+        run: ./decrypt_All.sh
+        env:
+          LARGE_SECRET_PASSPHRASE: ${{ secrets.LARGE_SECRET_PHRASE }}
+
+      - name: 🧶 Restore dependencies
+        run: dotnet restore ./WebApi.sln
+
+      - name: 🏗️ DotNet Build
+        run: dotnet build --no-restore ./WebApi.sln
+
+      - name: 🧪 DotNet Test
+        run: dotnet test --no-build --verbosity normal ./WebApi.sln
+
+      - name: 🚀 Generate migrations
+        run: dotnet ef migrations add AddLookupTables
+
+
+  docker-build-dev:
+    needs: [ "dotnet-build" ]
+    runs-on: ubuntu-latest
+    steps:
+      - name: 🛒 Checkout
+        uses: actions/checkout@v3
+
+      - name: 🔐 Decrypt Special
+        run: ./decrypt_Special.sh
+        env:
+          LARGE_SECRET_PASSPHRASE: ${{ secrets.LARGE_SECRET_PHRASE }}
+          
+      - name: 🔐 Decrypt All
+        run: ./decrypt_All.sh
+        env:
+          LARGE_SECRET_PASSPHRASE: ${{ secrets.LARGE_SECRET_PHRASE }}
+
+      - name: 🐳🏗️ Docker .local Build
+        run: docker build --rm --no-cache --tag $DOCKER_IMAGE_NAME:$DOCKER_BUILD_VERSION --file Dockerfile.dev .
+
+  docker-build-local:
+    needs: [ "dotnet-build" ]
+    runs-on: ubuntu-latest
+    steps:
+      - name: 🛒 Checkout
+        uses: actions/checkout@v3
+
+      - name: 🔐 Decrypt Special
+        run: ./decrypt_Special.sh
+        env:
+          LARGE_SECRET_PASSPHRASE: ${{ secrets.LARGE_SECRET_PHRASE }}
+          
+      - name: 🔐 Decrypt All
+        run: ./decrypt_All.sh
+        env:
+          LARGE_SECRET_PASSPHRASE: ${{ secrets.LARGE_SECRET_PHRASE }}
+
+      - name: 🐳🏗️ Docker .local Build
+        run: docker build --rm --no-cache --tag $DOCKER_IMAGE_NAME:$DOCKER_BUILD_VERSION --file Dockerfile.local .
+
+
+  docker-build-prod:
+    needs: [ "dotnet-build" ]
+    runs-on: ubuntu-latest
+    steps:
+      - name: 🛒 Checkout
+        uses: actions/checkout@v3
+
+      - name: 🔐 Decrypt Special
+        run: ./decrypt_Special.sh
+        env:
+          LARGE_SECRET_PASSPHRASE: ${{ secrets.LARGE_SECRET_PHRASE }}
+          
+      - name: 🔐 Decrypt All
+        run: ./decrypt_All.sh
+        env:
+          LARGE_SECRET_PASSPHRASE: ${{ secrets.LARGE_SECRET_PHRASE }}
+
+      - name: ✍️ Remove Line 12 from launchSettings.json
+        run: sed -i.bak -e '12d' Properties/launchSettings.json
+    
+      - name: ❌ Remove backup of launchSettings.json
+        run: |
+          FILE=Properties/launchSettings.json
+          if [ -f "$FILE" ]; then
+            rm Properties/launchSettings.json.bak
+          fi
+
+      - name: 🐳🏗️ Docker .prod Build
+        run: docker build --rm --no-cache --tag "$DOCKER_IMAGE_NAME:$DOCKER_BUILD_VERSION" --file Dockerfile.prod .
+
+  pre-pr:
+    needs:
+      - docker-build-dev
+      - docker-build-local
+      - docker-build-prod
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+          # repository: repasscloud/optechx.api.users.git
+          # token: ${{ secrets.PAT }}
+
+      - name: Create report file
+        run: date +%Y%m%d%H%M%S > ./report.txt
+
+      - name: Push updates to optechx.api.users repo
+        run: |
+          git pull
+          updates=$(date +%Y%m%d%H%M%S)
+          git config user.name 'Auto Commit'
+          git config user.email 'auto-commit@users.noreply.github.com'
+          git remote set-url origin https://x-access-token:${{ secrets.PAT }}@github.com/repasscloud/optechx.api.users
+          git add .
+          git commit -m "$updates"
+          git push
+
+  auto-pr:
+    needs: [ "pre-pr" ]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: create pull request
+        run: gh pr create -B main -H dev --title 'Auto PR dev into main' --body 'Automatically created by gh-actions.'
+        env:
+          GITHUB_TOKEN: ${{ secrets.PAT }}
+
+  auto-merge:
+    needs: [ "auto-pr" ]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: merge pull request
+        run: gh pr merge --squash
+        env:
+          GITHUB_TOKEN: ${{ secrets.PAT }}
