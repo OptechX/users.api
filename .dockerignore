@@ -16,6 +16,7 @@ Makefile
 report.txt
 CHANGELOG.md
 install_frameworks.ps1
+packs.txt
 
 
 # User-specific files
