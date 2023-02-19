@@ -60,8 +60,12 @@ jobs:
           LARGE_SECRET_PASSPHRASE: ${{ secrets.LARGE_SECRET_PHRASE }}
         shell: bash
 
+      - name: Set env
+        run: echo "DOCKER_BUILD_VERSION=$(cat version_info)" >> $GITHUB_ENV
+
       - name: 🐳🏗️ Docker .local Build
         run: docker build --rm --no-cache --tag $DOCKER_IMAGE_NAME:$DOCKER_BUILD_VERSION --file Dockerfile.dev .
+
 
   docker-build-local:
     needs: [ "dotnet-build" ]
@@ -75,6 +79,9 @@ jobs:
         env:
           LARGE_SECRET_PASSPHRASE: ${{ secrets.LARGE_SECRET_PHRASE }}
         shell: bash
+
+      - name: Set env
+        run: echo "DOCKER_BUILD_VERSION=$(cat version_info)" >> $GITHUB_ENV
 
       - name: 🐳🏗️ Docker .local Build
         run: docker build --rm --no-cache --tag $DOCKER_IMAGE_NAME:$DOCKER_BUILD_VERSION --file Dockerfile.local .
@@ -102,6 +109,9 @@ jobs:
           if [ -f "$FILE" ]; then
             rm Properties/launchSettings.json.bak
           fi
+
+      - name: Set env
+        run: echo "DOCKER_BUILD_VERSION=$(cat version_info)" >> $GITHUB_ENV
 
       - name: 🐳🏗️ Docker .prod Build
         run: docker build --rm --no-cache --tag "$DOCKER_IMAGE_NAME:$DOCKER_BUILD_VERSION" --file Dockerfile.prod .
@@ -150,6 +160,7 @@ jobs:
         run: gh pr create -B main -H dev --title 'Auto PR dev into main' --body 'Automatically created by gh-actions.'
         env:
           GITHUB_TOKEN: ${{ secrets.PAT }}
+
 
   auto-merge:
     needs: [ "auto-pr" ]
