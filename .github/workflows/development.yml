@@ -8,7 +8,6 @@ on:
   workflow_dispatch:
 
 env:
-  DOCKER_BUILD_VERSION: "2.1-alpha"
   DOCKER_IMAGE_NAME: "repasscloud/optechx.users.api.prod"
 
 jobs:
@@ -60,7 +59,7 @@ jobs:
           LARGE_SECRET_PASSPHRASE: ${{ secrets.LARGE_SECRET_PHRASE }}
         shell: bash
 
-      - name: Set env
+      - name: 🔱 Set env
         run: echo "DOCKER_BUILD_VERSION=$(cat version_info)" >> $GITHUB_ENV
 
       - name: 🐳🏗️ Docker .local Build
@@ -80,7 +79,7 @@ jobs:
           LARGE_SECRET_PASSPHRASE: ${{ secrets.LARGE_SECRET_PHRASE }}
         shell: bash
 
-      - name: Set env
+      - name: 🔱 Set env
         run: echo "DOCKER_BUILD_VERSION=$(cat version_info)" >> $GITHUB_ENV
 
       - name: 🐳🏗️ Docker .local Build
@@ -110,7 +109,7 @@ jobs:
             rm Properties/launchSettings.json.bak
           fi
 
-      - name: Set env
+      - name: 🔱 Set env
         run: echo "DOCKER_BUILD_VERSION=$(cat version_info)" >> $GITHUB_ENV
 
       - name: 🐳🏗️ Docker .prod Build
