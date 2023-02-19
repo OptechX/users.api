@@ -46,4 +46,6 @@ jobs:
         run: dotnet test --no-build --verbosity normal ./WebApi.sln
 
       - name: 🚀 Generate migrations
-        run: dotnet ef migrations add ReCreateLookupTables
+        run: |
+          rm -rf Migrations
+          dotnet ef migrations add ReCreateLookupTables

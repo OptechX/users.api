@@ -78,6 +78,9 @@ jobs:
             rm Properties/launchSettings.json.bak
           fi
 
+      - name: Set env
+        run: echo "DOCKER_BUILD_VERSION=$(cat version_info)" >> $GITHUB_ENV
+
       - name: 🐳🏗️ Docker .prod Build
         run: |
           docker build --rm --no-cache --tag "$DOCKER_IMAGE_NAME:$DOCKER_BUILD_VERSION" --file Dockerfile.prod .
