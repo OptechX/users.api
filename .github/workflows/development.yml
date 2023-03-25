@@ -3,8 +3,6 @@ name: Development Branch
 on:
   push:
     branches: [ "dev" ]
-  schedule:
-    - cron: '0 2 * * 2'
   workflow_dispatch:
 
 env:
